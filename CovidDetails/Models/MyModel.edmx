@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="CovidDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cities">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CityName" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Hospitals">
+          <Key>
+            <PropertyRef Name="HospitalId" />
+          </Key>
+          <Property Name="HospitalId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CityId" Type="int" Nullable="false" />
+          <Property Name="HospitalName" Type="varchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PatientDetails">
+          <Key>
+            <PropertyRef Name="PatientDetailsId" />
+          </Key>
+          <Property Name="PatientDetailsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Age" Type="int" Nullable="false" />
+          <Property Name="DOB" Type="datetime" Nullable="false" />
+          <Property Name="AdmissionDate" Type="datetime" Nullable="false" />
+          <Property Name="DischargeDate" Type="datetime" Nullable="false" />
+          <Property Name="TotalAmount" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TestDetails">
+          <Key>
+            <PropertyRef Name="TestDetailsId" />
+          </Key>
+          <Property Name="TestDetailsId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PatientDetailsId" Type="int" Nullable="false" />
+          <Property Name="HospitalId" Type="int" Nullable="false" />
+          <Property Name="TestName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="TestDate" Type="datetime" Nullable="false" />
+          <Property Name="TestResult" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="TotalPrice" Type="numeric" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="DoctorRemark" Type="nvarchar" MaxLength="200" />
+        </EntityType>
+        <Association Name="FK_TestDetails_Hospitals">
+          <End Role="Hospitals" Type="Self.Hospitals" Multiplicity="1" />
+          <End Role="TestDetails" Type="Self.TestDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospitals">
+              <PropertyRef Name="HospitalId" />
+            </Principal>
+            <Dependent Role="TestDetails">
+              <PropertyRef Name="HospitalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestDetails_PatientDetails">
+          <End Role="PatientDetails" Type="Self.PatientDetails" Multiplicity="1" />
+          <End Role="TestDetails" Type="Self.TestDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PatientDetails">
+              <PropertyRef Name="PatientDetailsId" />
+            </Principal>
+            <Dependent Role="TestDetails">
+              <PropertyRef Name="PatientDetailsId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CovidDbModelStoreContainer">
+          <EntitySet Name="Cities" EntityType="Self.Cities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Hospitals" EntityType="Self.Hospitals" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PatientDetails" EntityType="Self.PatientDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TestDetails" EntityType="Self.TestDetails" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_TestDetails_Hospitals" Association="Self.FK_TestDetails_Hospitals">
+            <End Role="Hospitals" EntitySet="Hospitals" />
+            <End Role="TestDetails" EntitySet="TestDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestDetails_PatientDetails" Association="Self.FK_TestDetails_PatientDetails">
+            <End Role="PatientDetails" EntitySet="PatientDetails" />
+            <End Role="TestDetails" EntitySet="TestDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CovidDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CityName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Hospital">
+          <Key>
+            <PropertyRef Name="HospitalId" />
+          </Key>
+          <Property Name="HospitalId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CityId" Type="Int32" Nullable="false" />
+          <Property Name="HospitalName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="TestDetails" Relationship="Self.FK_TestDetails_Hospitals" FromRole="Hospitals" ToRole="TestDetails" />
+        </EntityType>
+        <EntityType Name="PatientDetail">
+          <Key>
+            <PropertyRef Name="PatientDetailsId" />
+          </Key>
+          <Property Name="PatientDetailsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Age" Type="Int32" Nullable="false" />
+          <Property Name="DOB" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="AdmissionDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DischargeDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TotalAmount" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="TestDetails" Relationship="Self.FK_TestDetails_PatientDetails" FromRole="PatientDetails" ToRole="TestDetails" />
+        </EntityType>
+        <EntityType Name="TestDetail">
+          <Key>
+            <PropertyRef Name="TestDetailsId" />
+          </Key>
+          <Property Name="TestDetailsId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PatientDetailsId" Type="Int32" Nullable="false" />
+          <Property Name="HospitalId" Type="Int32" Nullable="false" />
+          <Property Name="TestName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TestDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TestResult" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="DoctorRemark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Hospital" Relationship="Self.FK_TestDetails_Hospitals" FromRole="TestDetails" ToRole="Hospitals" />
+          <NavigationProperty Name="PatientDetail" Relationship="Self.FK_TestDetails_PatientDetails" FromRole="TestDetails" ToRole="PatientDetails" />
+        </EntityType>
+        <Association Name="FK_TestDetails_Hospitals">
+          <End Role="Hospitals" Type="Self.Hospital" Multiplicity="1" />
+          <End Role="TestDetails" Type="Self.TestDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Hospitals">
+              <PropertyRef Name="HospitalId" />
+            </Principal>
+            <Dependent Role="TestDetails">
+              <PropertyRef Name="HospitalId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TestDetails_PatientDetails">
+          <End Role="PatientDetails" Type="Self.PatientDetail" Multiplicity="1" />
+          <End Role="TestDetails" Type="Self.TestDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PatientDetails">
+              <PropertyRef Name="PatientDetailsId" />
+            </Principal>
+            <Dependent Role="TestDetails">
+              <PropertyRef Name="PatientDetailsId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CovidDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cities" EntityType="Self.City" />
+          <EntitySet Name="Hospitals" EntityType="Self.Hospital" />
+          <EntitySet Name="PatientDetails" EntityType="Self.PatientDetail" />
+          <EntitySet Name="TestDetails" EntityType="Self.TestDetail" />
+          <AssociationSet Name="FK_TestDetails_Hospitals" Association="Self.FK_TestDetails_Hospitals">
+            <End Role="Hospitals" EntitySet="Hospitals" />
+            <End Role="TestDetails" EntitySet="TestDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TestDetails_PatientDetails" Association="Self.FK_TestDetails_PatientDetails">
+            <End Role="PatientDetails" EntitySet="PatientDetails" />
+            <End Role="TestDetails" EntitySet="TestDetails" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CovidDbModelStoreContainer" CdmEntityContainer="CovidDbEntities">
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="CovidDbModel.City">
+              <MappingFragment StoreEntitySet="Cities">
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Hospitals">
+            <EntityTypeMapping TypeName="CovidDbModel.Hospital">
+              <MappingFragment StoreEntitySet="Hospitals">
+                <ScalarProperty Name="HospitalId" ColumnName="HospitalId" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="HospitalName" ColumnName="HospitalName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PatientDetails">
+            <EntityTypeMapping TypeName="CovidDbModel.PatientDetail">
+              <MappingFragment StoreEntitySet="PatientDetails">
+                <ScalarProperty Name="PatientDetailsId" ColumnName="PatientDetailsId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="AdmissionDate" ColumnName="AdmissionDate" />
+                <ScalarProperty Name="DischargeDate" ColumnName="DischargeDate" />
+                <ScalarProperty Name="TotalAmount" ColumnName="TotalAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TestDetails">
+            <EntityTypeMapping TypeName="CovidDbModel.TestDetail">
+              <MappingFragment StoreEntitySet="TestDetails">
+                <ScalarProperty Name="TestDetailsId" ColumnName="TestDetailsId" />
+                <ScalarProperty Name="PatientDetailsId" ColumnName="PatientDetailsId" />
+                <ScalarProperty Name="HospitalId" ColumnName="HospitalId" />
+                <ScalarProperty Name="TestName" ColumnName="TestName" />
+                <ScalarProperty Name="TestDate" ColumnName="TestDate" />
+                <ScalarProperty Name="TestResult" ColumnName="TestResult" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="DoctorRemark" ColumnName="DoctorRemark" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

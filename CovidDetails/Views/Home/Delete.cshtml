@@ -1,0 +1,35 @@
+﻿@model CovidDetails.Models.TestDetail
+
+<h2>Delete Employee</h2>
+@using (Html.BeginForm("delete", "Home", FormMethod.Post, new { id = "popupForm" }))
+{
+    @Html.HiddenFor(a => a.TestDetailsId)
+    <div class="form-group">
+        <label>Test Name</label>
+        <p>@Model.TestName</p>
+    </div>
+
+    <div class="form-group">
+        <label>Test Date</label>
+        <p>@Model.TestDate</p>
+    </div>
+
+    <div class="form-group">
+        <label>Test Result</label>
+        <p>@Model.TestResult</p>
+    </div>
+
+    <div class="form-group">
+        <label>Total Price</label>
+        <p>@Model.TotalPrice</p>
+    </div>
+
+    <div class="form-group">
+        <label>Doctor Remark</label>
+        <p>@Model.DoctorRemark</p>
+    </div>
+
+    <div>
+        <input type="submit" value="Delete" />
+    </div>
+}

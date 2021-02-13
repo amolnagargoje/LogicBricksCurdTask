@@ -1,0 +1,37 @@
+﻿@model  CovidDetails.Models.TestDetail
+
+<h2>Add Test Details</h2>
+@using (Html.BeginForm("save", "Home", FormMethod.Post, new { id = "popupForm" }))
+{
+    if (Model != null && Model.TestDetailsId > 0)
+    {
+        @Html.HiddenFor(a => a.TestDetailsId)
+    }
+    <div class="form-group">
+        <lable>Test Name</lable>
+        @Html.TextBoxFor(a => a.TestName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        <lable>Test Date</lable>
+        @Html.TextBoxFor(a => a.TestDate, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        <lable>Test Result</lable>
+        @Html.TextBoxFor(a => a.TestResult, new { @class = "form-control" })
+
+    </div>
+    <div class="form-group">
+        <lable>Total Price</lable>
+        @Html.TextBoxFor(a => a.TotalPrice, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        <lable>Doctor Remark</lable>
+        @Html.TextBoxFor(a => a.DoctorRemark, new { @class = "form-control" })
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+}

@@ -1,0 +1,274 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        span.field-validation-error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center">Covid Test Details Form</h2>
+    <div class="container">
+        <div class="master">
+            <h2>Patient Details</h2>
+            <table class="table table-responsive">
+                <tr>
+                    <td>First Name</td>
+                    <td>
+                        <input type="text" id="FirstName" class="form-control" />
+                        <span class="error">required</span>
+                    </td>
+
+                    <td>Last Name</td>
+                    <td>
+                        <input type="text" id="LastName" class="form-control" />
+                        <span class="error">required</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Date of Birth</td>
+                    <td>
+                        <input type="text" id="DateofBirth" class="form-control" />
+                        <span class="error">Valid Date of Birthrequired (ex: MM-dd-yyyy)</span>
+                    </td>
+
+                    <td>Age</td>
+                    <td>
+                        <input type="text" id="Age" class="form-control" />
+                        <span class="error">required</span>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>Addmision Date</td>
+                    <td>
+                        <input type="text" id="AddmisionDate" class="form-control" />
+                        <span class="error">Valid AddmisionDate date required (ex: MM-dd-yyyy)</span>
+                    </td>
+
+                    <td>Discharge Date</td>
+                    <td>
+                        <input type="text" id="DischargeDate" class="form-control" />
+                        <span class="error">Valid order date required (ex: MM-dd-yyyy)</span>
+                    </td>
+                </tr>
+                <tr class="mycontainer" id="mainrow">
+                    <td>City</td>
+                    <td>
+                        <select id="HospitalCities" class="pc form-control" onchange="LoadHospital(this)">
+                            <option>Select</option>
+                        </select>
+                        <span class="error">Select City</span>
+                    </td>
+
+                    <td>Hospital</td>
+                    <td>
+                        <select id="Hospital" class="Hospital form-control">
+                            <option>Select</option>
+                        </select>
+                        <span class="error">Select Hospital</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Total Amount</td>
+                    <td>
+                        <input type="text" id="TotalAmount" class="TotalAmount form-control" />
+                        <span class="error">Valid TotalAmount required</span>
+                    </td>
+
+
+
+                    <td>
+                       @* <a class="popup btn btn-primary" href="/home/save/0" style="width:80px">Add Test</a>*@
+
+
+                        @*<input type="button" id="add" value="add" style="width:80px" class="btn btn-success" />*@
+
+                    </td>
+
+
+                </tr>
+            </table>
+        </div>
+
+        <div style="width:90%; margin:0 auto" class="tablecontainer">
+            <a class="popup btn btn-primary" href="/Home/save/0" style="margin-bottom:20px; margin-top:20px;">Add Test</a>
+            <table id="myDatatable">
+                <thead>
+                    <tr>
+                        <th>Test Name</th>
+                        <th>Test Date</th>
+                        <th>Test Result</th>
+                        <th>Test Price</th>
+                        <th>Doctor Remark</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <script>
+
+            $(document).ready(function () {
+                var oTable = $('#myDatatable').DataTable({
+                    "ajax": {
+                        "url": 'Home/getTestDetailsreport',
+                        "type": "GET",
+                        "datatype": "json"
+                    },
+                    "columns": [
+                        { "data": "Test Name", "autoWidth": true },
+                        { "data": "Test Date", "autoWidth": true },
+                        { "data": "Test Result", "autoWidth": true },
+                        { "data": "Doctor Remark", "autoWidth": true },
+                        {
+                            "data": "TestDetailsId", "width": "50px", "render": function (data) {
+                                return '<a class="popup" href="/Home/save/' + data + '">Edit</a>';
+                            }
+                        },
+                        {
+                            "data": "TestDetailsId", "width": "50px", "render": function (data) {
+                                return '<a class="popup" href="/Home/delete/' + data + '">Delete</a>';
+                            }
+                        }
+
+                    ]
+
+                })
+
+                $('.tablecontainer').on('click', 'a.popup', function (e) {
+                    e.preventDefault();
+                    OpenPopup($(this).attr('href'));
+                })
+                function OpenPopup(pageUrl) {
+                    var $pageContent = $('<div/>');
+                    $pageContent.load(pageUrl, function () {
+                        $('#popupForm', $pageContent).removeData('validator');
+                        $('#popupForm', $pageContent).removeData('unobtrusiveValidation');
+                        $.validator.unobtrusive.parse('form');
+
+                    });
+
+                    $dialog = $('<div class="popupWindow" style="overflow:auto"></div>')
+                        .html($pageContent)
+                        .dialog({
+                            draggable: false,
+                            autoOpen: false,
+                            resizable: false,
+                            model: true,
+                            title: 'Popup Dialog',
+                            height: 550,
+                            width: 600,
+                            close: function () {
+                                $dialog.dialog('destroy').remove();
+                            }
+                        })
+
+                    $('.popupWindow').on('submit', '#popupForm', function (e) {
+                        var url = $('#popupForm')[0].action;
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: $('#popupForm').serialize(),
+                            success: function (data) {
+                                if (data.status) {
+                                    $dialog.dialog('close');
+                                    oTable.ajax.reload();
+                                }
+                            }
+                        })
+
+                        e.preventDefault();
+                    })
+                    $dialog.dialog('open');
+                }
+            })
+
+        </script>
+
+
+
+        <div id="TestDetails">
+            <table class="table table-responsive" id="TestDetailsItems"></table>
+            <span id="TestDetailsError" style="color:red"></span>
+        </div>
+        <div style="padding:10px 0; text-align:center">
+            <input id="submit" type="button" value="Submit" class="btn btn-warning" style="padding:10px 20px" />
+        </div>
+
+    </div>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="~/Scripts/myScripts.js"></script>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    //
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#DateofBirth').datepicker(
+                {
+                    dateFormat: 'dd/mm/yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: '1950:2100'
+                });
+        })
+
+
+        $(function () {
+            $('#AddmisionDate').datepicker(
+                {
+                    dateFormat: 'dd/mm/yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: '1950:2100'
+                });
+        })
+
+        $(function () {
+            $('#DischargeDate').datepicker(
+                {
+                    dateFormat: 'dd/mm/yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: '1950:2100'
+                });
+        })
+    </script>
+    <style>
+        span.error {
+            display: block;
+            visibility: hidden;
+            color: red;
+            font-size: 90%;
+        }
+
+        tr.error {
+            background-color: rgba(255,0,0,0.35);
+        }
+    </style>
+
+
+</body>
+</html>
